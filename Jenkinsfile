@@ -5,9 +5,13 @@ node {
   def awsECRRepo = "267951893256.dkr.ecr.eu-west-1.amazonaws.com"
   def imageTag = "${awsECRRepo}/${project}:${appName}-${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
 
-  stage "Checkout last modification"
   checkout scm
 
+  docker.withRegistry("https://${awsECRRepo}", "ecr:AKIAI26R2RU6C6Q3656Q") {
+    stage 'Build image 1'
+    docker.image("${project}:${appName}-${env.BRANCH_NAME}.${env.BUILD_NUMBER}").build()
+    
+  }
 
   stage "Deploy Application"
   switch (env.BRANCH_NAME) {
