@@ -9,9 +9,9 @@ node {
   checkout scm
 
   stage "Creating new Image"
-    kubernetes.pod('buildpod').withImage('maven').inside {      
-        git 'https://github.com/fabric8io/kubernetes-pipeline.git'
-        sh 'mvn clean install'
+  kubernetes.pod('buildpod').withImage('maven').inside {      
+      git 'https://github.com/fabric8io/kubernetes-pipeline.git'
+      sh 'mvn clean install'
   }
 
   stage "Deploy Application"
