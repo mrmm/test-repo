@@ -1,19 +1,17 @@
 node {
-  def project = 'REPLACE_WITH_YOUR_PROJECT_ID'
+  def project = 'sample-app'
   def appName = 'gceme'
   def feSvcName = "${appName}-frontend"
-  def imageTag = "gcr.io/${project}/${appName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+  def awsECRRepo = "267951893256.dkr.ecr.eu-west-1.amazonaws.com"
+  def imageTag = "${awsECRRepo}/${project}:${appName}-${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
 
   checkout scm
 
-  stage 'Build image'
-  sh("docker build -t ${imageTag} .")
-
-  stage 'Run Go tests'
-  sh("docker run ${imageTag} go test")
-
-  stage 'Push image to registry'
-  sh("gcloud docker push ${imageTag}")
+  docker.withRegistry("https://${awsECRRepo}", "ecr:AKIAI26R2RU6C6Q3656Q") {
+    stage 'Build image'
+    docker.image("${project}:${appName}-${env.BRANCH_NAME}.${env.BUILD_NUMBER}").build()
+    
+  }
 
   stage "Deploy Application"
   switch (env.BRANCH_NAME) {
