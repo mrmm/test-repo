@@ -1,4 +1,4 @@
-node {
+/*node {
   def project = 'sample-app'
   def appName = 'gceme'
   def feSvcName = "${appName}-frontend"
@@ -46,4 +46,11 @@ node {
         echo 'To access your environment run `kubectl proxy`'
         echo "Then access your service via http://localhost:8001/api/v1/proxy/namespaces/${env.BRANCH_NAME}/services/${feSvcName}:80/"
   }
+}*/
+node{ 
+    stage "Creating new Image"
+    kubernetes.pod('buildpod').withImage('maven').inside {      
+        git 'https://github.com/fabric8io/kubernetes-pipeline.git'
+        sh 'mvn clean install'
+    } 
 }
