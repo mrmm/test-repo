@@ -1,4 +1,4 @@
-/*node {
+node {
   def project = 'sample-app'
   def appName = 'gceme'
   def feSvcName = "${appName}-frontend"
@@ -8,10 +8,10 @@
   stage "Testing somthing"
   checkout scm
 
-  docker.withRegistry("https://${awsECRRepo}", "ecr:AKIAI26R2RU6C6Q3656Q") {
-    stage 'Build image 1'
-    docker.image("${project}:${appName}-${env.BRANCH_NAME}.${env.BUILD_NUMBER}").build()
-    
+  stage "Creating new Image"
+    kubernetes.pod('buildpod').withImage('maven').inside {      
+        git 'https://github.com/fabric8io/kubernetes-pipeline.git'
+        sh 'mvn clean install'
   }
 
   stage "Deploy Application"
@@ -46,11 +46,22 @@
         echo 'To access your environment run `kubectl proxy`'
         echo "Then access your service via http://localhost:8001/api/v1/proxy/namespaces/${env.BRANCH_NAME}/services/${feSvcName}:80/"
   }
-}*/
+}
+/*
 node{ 
+    def project = 'sample-app'
+    def appName = 'gceme'
+    def feSvcName = "${appName}-frontend"
+    def awsECRRepo = "267951893256.dkr.ecr.eu-west-1.amazonaws.com"
+    def imageTag = "${awsECRRepo}/${project}:${appName}-${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+
+    stage "updating from source"
+    checkout scm
+
     stage "Creating new Image"
     kubernetes.pod('buildpod').withImage('maven').inside {      
         git 'https://github.com/fabric8io/kubernetes-pipeline.git'
         sh 'mvn clean install'
     } 
 }
+*/
