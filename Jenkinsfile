@@ -5,6 +5,7 @@ node {
   def awsECRRepo = "267951893256.dkr.ecr.eu-west-1.amazonaws.com"
   def imageTag = "${awsECRRepo}/${project}:${appName}-${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
 
+  stage "Testing somthing"
   checkout scm
 
   docker.withRegistry("https://${awsECRRepo}", "ecr:AKIAI26R2RU6C6Q3656Q") {
